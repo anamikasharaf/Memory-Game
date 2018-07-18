@@ -15,10 +15,25 @@
   let listElement = document.getElementsByClassName('deck');
   // accessing restart
   let restart = document.querySelector('.restart');
+  // setting star
+  let stars = document.querySelector('.stars');
   // setting the number of moves
   let move = 0;
   // creating an array for matched cards
   let matchedCard = [];
+
+  // setting rating stars
+  let star1 = document.createElement('i');
+  star1.classList.add('fa','fa-star');
+  stars.appendChild(star1);
+
+  let star2 = document.createElement('i');
+  star2.classList.add('fa','fa-star');
+  stars.appendChild(star2);
+
+  let star3 = document.createElement('i');
+  star3.classList.add('fa','fa-star');
+  stars.appendChild(star3);
 
 
   /*
@@ -126,9 +141,35 @@
         // changing the move on the screen
         document.getElementsByClassName('moves')[0].textContent = move;
       }
-      if (matchedCard.length === 16)
+      setRating(move);
+
+      if (matchedCard.length === 8)
       {
-        alert(`your score is ${move}`);
+        swal({
+          title: "Good job!",
+          text: "You are doing well!",
+          icon: "success",
+        });
+      }
+      else if (matchedCard.length === 12)
+      {
+        swal({
+          title: "Exellent job!",
+          text: "You are almost there!",
+          icon: "success",
+        });
+      }
+      else if (matchedCard.length === 16)
+      {
+        swal({
+          title: "Game Over!",
+          text: "You did well!",
+          icon: "success",
+        }).then(function (isConfirm) {
+          if (isConfirm) {
+            generateBoard(array);
+          }
+        });
       }
 
 
@@ -142,7 +183,15 @@
 
    // adding rating to the game
    function setRating(move) {
-
+    if (move <= 24 && move >= 12)
+     {
+       star3.classList.remove('fa','fa-star');
+       // star3.classList.add('fa','fa-star-o');
+     }
+     else if (move >= 24)
+     {
+       star2.classList.remove('fa','fa-star');
+     }
    }
 
    // reset button eventhandler
@@ -165,5 +214,25 @@
    });
 
 
-   // calling generateBoard(array) function to start the game
-   generateBoard(array);
+   // adding intro to the game
+   function intro() {
+     // console.log("in intro");
+     swal({
+        title: "Are you ready for this game?",
+        text: "16 boxes and 8 pairs! you look at a card once and try to find a match!",
+        type: "info",
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Yes, let's start!",
+        closeOnConfirm: false
+      }).then(function (isConfirm) {
+        if (isConfirm) {
+          generateBoard(array);
+        }
+      })
+   };
+
+
+
+   // calling intro() function to start the game
+    intro();
+    // generateBoard(array);
