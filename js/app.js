@@ -37,6 +37,10 @@
 
   let set=0;
 
+  // setting up timer variables
+  let time = 0;
+  let timer = document.querySelector('.timer');
+
 
   /*
    * Display the cards on the page
@@ -84,8 +88,37 @@
     }
 
     addCardEventListener();
+    resetEverything();
+    setTimeout();
   }
 
+  function setTimeout(){
+    if (!time)
+    {
+      time = setInterval(function(){
+
+        if (status === gameStatus.PLAYING) {
+          timer.innerText = `${time} secs`;
+          time++;
+        }
+      },1000);
+    }
+  }
+
+  function resetEverything()
+  {
+    if(time)
+    {
+      clearInterval(time);
+      time = 0;
+      status = gameStatus.NOTPLAYING;
+      timer.innerText = time;
+      move = 0;
+      star1.classList.add('fa','fa-star');
+      star2.classList.add('fa','fa-star');
+      star3.classList.add('fa','fa-star');
+    }
+  }
 
 
   /*
@@ -159,7 +192,6 @@
     if (move <= 24 && move >= 12)
      {
        star3.classList.remove('fa','fa-star');
-       // star3.classList.add('fa','fa-star-o');
      }
      else if (move >= 24)
      {
@@ -190,9 +222,10 @@
      }
      else if (matchedCard.length === 16)
      {
+       let content = `You took ${move} and ${time} to finish the game. Do you wanna play again?`;
        swal({
           title: "Game Over! Congratulations :)",
-          text: "Do you want to start a new game?",
+          text: content,
           type: "warning",
           showCancelButton: true,
           confirmButtonClass: "btn-danger",
