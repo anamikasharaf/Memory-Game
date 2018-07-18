@@ -35,6 +35,8 @@
   star3.classList.add('fa','fa-star');
   stars.appendChild(star3);
 
+  let set=0;
+
 
   /*
    * Display the cards on the page
@@ -142,37 +144,7 @@
         document.getElementsByClassName('moves')[0].textContent = move;
       }
       setRating(move);
-
-      if (matchedCard.length === 8)
-      {
-        swal({
-          title: "Good job!",
-          text: "You are doing well!",
-          icon: "success",
-        });
-      }
-      else if (matchedCard.length === 12)
-      {
-        swal({
-          title: "Exellent job!",
-          text: "You are almost there!",
-          icon: "success",
-        });
-      }
-      else if (matchedCard.length === 16)
-      {
-        swal({
-          title: "Game Over!",
-          text: "You did well!",
-          icon: "success",
-        }).then(function (isConfirm) {
-          if (isConfirm) {
-            generateBoard(array);
-          }
-        });
-      }
-
-
+      congratulationPopus();
    }
 
    // adding event listener to the board
@@ -183,6 +155,7 @@
 
    // adding rating to the game
    function setRating(move) {
+     console.log("congratulation checks");
     if (move <= 24 && move >= 12)
      {
        star3.classList.remove('fa','fa-star');
@@ -191,6 +164,45 @@
      else if (move >= 24)
      {
        star2.classList.remove('fa','fa-star');
+     }
+   }
+
+   // Congratulations popups
+   function congratulationPopus()
+   {
+     if (matchedCard.length === 8 && set===0)
+     {
+       set = 1;
+       swal({
+         title: "Good job!",
+         text: "You are doing well!",
+         icon: "success",
+       });
+     }
+     else if (matchedCard.length === 12 && set===1)
+     {
+       set = 2;
+       swal({
+         title: "Exellent job!",
+         text: "You are almost there!",
+         icon: "success",
+       });
+     }
+     else if (matchedCard.length === 16)
+     {
+       swal({
+          title: "Game Over! Congratulations :)",
+          text: "Do you want to start a new game?",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-danger",
+          confirmButtonText: "Yes, Please!",
+          closeOnConfirm: false
+        }).then(function (isConfirm) {
+          if (isConfirm) {
+            generateBoard(array);
+          }
+        })
      }
    }
 
@@ -216,7 +228,7 @@
 
    // adding intro to the game
    function intro() {
-     // console.log("in intro");
+     console.log("in intro");
      swal({
         title: "Are you ready for this game?",
         text: "16 boxes and 8 pairs! you look at a card once and try to find a match!",
@@ -234,5 +246,5 @@
 
 
    // calling intro() function to start the game
-    intro();
-    // generateBoard(array);
+    // intro();
+    generateBoard(array);
