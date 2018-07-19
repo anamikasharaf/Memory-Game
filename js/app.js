@@ -21,15 +21,12 @@
 
   // setting rating stars
   let star1 = document.createElement('i');
-  star1.classList.add('fa','fa-star');
   stars.appendChild(star1);
 
   let star2 = document.createElement('i');
-  star2.classList.add('fa','fa-star');
   stars.appendChild(star2);
 
   let star3 = document.createElement('i');
-  star3.classList.add('fa','fa-star');
   stars.appendChild(star3);
 
   let set=0;
@@ -54,34 +51,6 @@
       return array;
   }
 
-  // looping through each card and creating it's HTML tag
-  function generateBoard(array) {
-
-    // shuffling the array first
-    let shuffledArray = shuffle(array);
-
-    // looping through the array, creating it's HTML and adding each card's HTML to page
-    for (let i=0; i<16; i++)
-    {
-      // creating li tag
-      let liElement = document.createElement('li');
-      // adding class name to liElement
-      liElement.classList.add("card");
-      // creating i tag
-      let iElement = document.createElement('i');
-      // adding class name to iElement
-      iElement.classList.add('fa', shuffledArray[i]);
-      // appending iElement to liElement
-      liElement.appendChild(iElement);
-      // appending iElement to the list
-      listElement[0].appendChild(liElement);
-    }
-
-    addCardEventListener();
-    resetEverything();
-    setTimeout();
-  }
-
   // setting timer function
   function setTimeout(){
     if (!time)
@@ -103,17 +72,104 @@
     {
       clearInterval(time);
       time = 0;
+      set = 0;
       status = gameStatus.NOTPLAYING;
       timer.innerText = time;
       move = 0;
-      star1.classList.add('fa','fa-star');
-      star2.classList.add('fa','fa-star');
-      star3.classList.add('fa','fa-star');
+      matchedCard = [];
     }
   }
 
+  // looping through each card and creating it's HTML tag
+  function generateBoard(array) {
+
+    // shuffling the array first
+    let shuffledArray = shuffle(array);
+
+    // setting the rating stars
+    star1.classList.add('fa','fa-star');
+    star2.classList.add('fa','fa-star');
+    star3.classList.add('fa','fa-star');
+
+    // looping through the array, creating it's HTML and adding each card's HTML to page
+    for (let i=0; i<16; i++)
+    {
+      // creating li tag
+      let liElement = document.createElement('li');
+      // adding class name to liElement
+      liElement.classList.add("card");
+      // creating i tag
+      let iElement = document.createElement('i');
+      // adding class name to iElement
+      iElement.classList.add('fa', shuffledArray[i]);
+      // appending iElement to liElement
+      liElement.appendChild(iElement);
+      // appending iElement to the list
+      listElement[0].appendChild(liElement);
+    }
+    console.log("before eventlistener");
+    addCardEventListener();
+    resetEverything();
+    setTimeout();
+  }
+
+     // adding rating to the game
+     function setRating(move) {
+       console.log("congratulation checks");
+      if (move <= 24 && move >= 12)
+       {
+         star3.classList.remove('fa','fa-star');
+       }
+       else if (move >= 24)
+       {
+         star2.classList.remove('fa','fa-star');
+       }
+     }
+
+     // Congratulations popups
+     function congratulationPopus()
+     {
+       if (matchedCard.length === 8 && set===0)
+       {
+         set = 1;
+         swal({
+           title: "Good job!",
+           text: "You are doing well!",
+           icon: "success",
+         });
+       }
+       else if (matchedCard.length === 12 && set===1)
+       {
+         set = 2;
+         swal({
+           title: "Exellent job!",
+           text: "You are almost there!",
+           icon: "success",
+         });
+       }
+       else if (matchedCard.length === 16)
+       {
+         let content = `You took ${move} and ${time} to finish the game. Do you wanna play again?`;
+         swal({
+            title: "Game Over! Congratulations :)",
+            text: content,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, Please!",
+            closeOnConfirm: false
+          }).then(function (isConfirm) {
+            if (isConfirm) {
+              generateBoard(array);
+            }
+          })
+       }
+     }
+
    //display the card's symbol
    function displayCard(evt) {
+
+     console.log("inside displayCard");
 
      // checking for gameStatus and changing it to playing
       if (status === gameStatus.NOTPLAYING) {
@@ -136,9 +192,11 @@
           // if it's a match, both cards in the stack will change their class name from 'open', 'show' to 'match'
           // the both cards are popped out of openCard array and pushed in matchedCard array
           openCard[0].classList.remove('open', 'show');
-          openCard[0].classList.add('match');
+          openCard[0].classList.add('match','animated', 'infinite', 'rotateIn');
+          openCard[0].classList.remove('animated', 'infinite', 'rotateIn');
           openCard[1].classList.remove('open', 'show');
-          openCard[1].classList.add('match');
+          openCard[1].classList.add('match','animated', 'infinite', 'rotateIn');
+          openCard[1].classList.remove('animated', 'infinite', 'rotateIn');
           matchedCard.push(openCard.pop());
           matchedCard.push(openCard.pop());
         }
@@ -146,8 +204,10 @@
           console.log("there is no match, card is open again");
           // if cards dont match, then 'open', 'show' class name is removed
           // and both cards are popped out
-          openCard[0].classList.remove('open', 'show');
-          openCard[1].classList.remove('open', 'show');
+          openCard[0].classList.add('animated', 'infinite', 'shake');
+          openCard[0].classList.remove('open', 'show','animated', 'infinite', 'shake' );
+          openCard[1].classList.add('animated', 'infinite', 'shake');
+          openCard[1].classList.remove('open', 'show', 'animated', 'infinite', 'shake');
           openCard.pop();
           openCard.pop();
         }
@@ -162,62 +222,10 @@
 
    // adding event listener to the board
    let addCardEventListener = function () {
+     console.log("inside addCardEventListener");
      const $cards = document.querySelectorAll('.deck>.card');
      [...$cards].forEach($card => $card.addEventListener('click', displayCard));
    };
-
-   // adding rating to the game
-   function setRating(move) {
-     console.log("congratulation checks");
-    if (move <= 24 && move >= 12)
-     {
-       star3.classList.remove('fa','fa-star');
-     }
-     else if (move >= 24)
-     {
-       star2.classList.remove('fa','fa-star');
-     }
-   }
-
-   // Congratulations popups
-   function congratulationPopus()
-   {
-     if (matchedCard.length === 8 && set===0)
-     {
-       set = 1;
-       swal({
-         title: "Good job!",
-         text: "You are doing well!",
-         icon: "success",
-       });
-     }
-     else if (matchedCard.length === 12 && set===1)
-     {
-       set = 2;
-       swal({
-         title: "Exellent job!",
-         text: "You are almost there!",
-         icon: "success",
-       });
-     }
-     else if (matchedCard.length === 16)
-     {
-       let content = `You took ${move} and ${time} to finish the game. Do you wanna play again?`;
-       swal({
-          title: "Game Over! Congratulations :)",
-          text: content,
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonClass: "btn-danger",
-          confirmButtonText: "Yes, Please!",
-          closeOnConfirm: false
-        }).then(function (isConfirm) {
-          if (isConfirm) {
-            generateBoard(array);
-          }
-        })
-     }
-   }
 
    // reset button eventhandler
    restart.addEventListener('click', function(){
@@ -256,8 +264,6 @@
       })
    };
 
-
-
    // calling intro() function to start the game
-    // intro();
-    generateBoard(array);
+    intro();
+    // generateBoard(array);
