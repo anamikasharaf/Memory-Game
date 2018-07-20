@@ -191,12 +191,15 @@
           console.log("cards hava matched");
           // if it's a match, both cards in the stack will change their class name from 'open', 'show' to 'match'
           // the both cards are popped out of openCard array and pushed in matchedCard array
-          openCard[0].classList.remove('open', 'show');
           openCard[0].classList.add('match','animated', 'infinite', 'rotateIn');
-          openCard[0].classList.remove('animated', 'infinite', 'rotateIn');
-          openCard[1].classList.remove('open', 'show');
           openCard[1].classList.add('match','animated', 'infinite', 'rotateIn');
-          openCard[1].classList.remove('animated', 'infinite', 'rotateIn');
+
+          // waiting for sometime for animation
+          setTimeout(function() {
+            openCard[0].classList.remove('open', 'show','animated', 'infinite', 'rotateIn');
+            openCard[1].classList.remove('open', 'show','animated', 'infinite', 'rotateIn');
+          },500);
+
           matchedCard.push(openCard.pop());
           matchedCard.push(openCard.pop());
         }
@@ -205,9 +208,14 @@
           // if cards dont match, then 'open', 'show' class name is removed
           // and both cards are popped out
           openCard[0].classList.add('animated', 'infinite', 'shake');
-          openCard[0].classList.remove('open', 'show','animated', 'infinite', 'shake' );
           openCard[1].classList.add('animated', 'infinite', 'shake');
-          openCard[1].classList.remove('open', 'show', 'animated', 'infinite', 'shake');
+
+          // waiting for sometime for animation
+          setTimeout(function() {
+            openCard[0].classList.remove('open', 'show','animated', 'infinite', 'shake' );
+            openCard[1].classList.remove('open', 'show', 'animated', 'infinite', 'shake');
+          },500);
+
           openCard.pop();
           openCard.pop();
         }
@@ -265,5 +273,5 @@
    };
 
    // calling intro() function to start the game
-    intro();
-    // generateBoard(array);
+    // intro();
+    generateBoard(array);
