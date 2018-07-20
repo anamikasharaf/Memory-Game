@@ -1,5 +1,4 @@
-
-   // creating an array of strings that hold all the card names
+// creating an array of strings that hold all the card names
   let array = ["fa-diamond","fa-paper-plane-o","fa-anchor","fa-bolt","fa-cube","fa-anchor","fa-leaf","fa-bicycle","fa-diamond","fa-bomb","fa-leaf","fa-bomb","fa-bolt","fa-bicycle","fa-paper-plane-o","fa-cube"];
   // array to save all the open card
   let openCard = [];
@@ -72,16 +71,21 @@
     {
       clearInterval(time);
       time = 0;
+      timer.innerText = `${time} secs`;
       set = 0;
       status = gameStatus.NOTPLAYING;
-      timer.innerText = time;
       move = 0;
+      document.getElementsByClassName('moves')[0].textContent = move;
       matchedCard = [];
     }
   }
 
   // looping through each card and creating it's HTML tag
   function generateBoard(array) {
+    console.log( 'generate board' );
+
+    // clear the board
+    listElement[0].innerHTML = "";
 
     // shuffling the array first
     let shuffledArray = shuffle(array);
@@ -108,38 +112,37 @@
       listElement[0].appendChild(liElement);
     }
     console.log("before eventlistener");
-    addCardEventListener();
-    resetEverything();
+    CardEventListener();
+    console.log("after eventlistener");
     setTimeout();
   }
 
-     // adding rating to the game
-     function setRating(move) {
-       console.log("congratulation checks");
-      if (move <= 24 && move >= 12)
-       {
-         star3.classList.remove('fa','fa-star');
-       }
-       else if (move >= 24)
-       {
-         star2.classList.remove('fa','fa-star');
-       }
-     }
+  // adding rating to the game
+  function setRating(move) {
+    console.log("congratulation checks");
+    if (move <= 24 && move >= 12)
+    {
+     star3.classList.remove('fa','fa-star');
+    }
+    else if (move >= 24)
+    {
+     star2.classList.remove('fa','fa-star');
+    }
+  }
 
-     // Congratulations popups
-     function congratulationPopus()
-     {
-       if (matchedCard.length === 8 && set===0)
-       {
-         set = 1;
-         swal({
-           title: "Good job!",
-           text: "You are doing well!",
-           icon: "success",
-         });
-       }
-       else if (matchedCard.length === 12 && set===1)
-       {
+  // Congratulations popups
+  function congratulationPopus() {
+    if (matchedCard.length === 8 && set===0)
+      {
+        set = 1;
+        swal({
+          title: "Good job!",
+          text: "You are doing well!",
+          icon: "success",
+        });
+      }
+    else if (matchedCard.length === 12 && set===1)
+      {
          set = 2;
          swal({
            title: "Exellent job!",
@@ -164,7 +167,7 @@
             }
           })
        }
-     }
+  }
 
    //display the card's symbol
    function displayCard(evt) {
@@ -172,67 +175,56 @@
      console.log("inside displayCard");
 
      // checking for gameStatus and changing it to playing
-      if (status === gameStatus.NOTPLAYING) {
+     if (status === gameStatus.NOTPLAYING) {
         status = gameStatus.PLAYING;
-      }
+     }
 
-      // checking for card class, it should either match
-      let card = evt.currentTarget;
+     // checking for card class, it should either match
+     let card = evt.currentTarget;
 
-      // when card is clicked the class changes to "card open show"
-      card.classList.add('open', 'show');
+     // when card is clicked the class changes to "card open show"
+     card.classList.add('open', 'show');
 
-      // add it to the stack of open cards
-      openCard.push(card);
+     // add it to the stack of open cards
+     openCard.push(card);
 
-      // checking for a match
-      if (openCard.length > 1) {
-        if (card.innerHTML === openCard[0].innerHTML) {
+     // checking for a match
+     if (openCard.length > 1) {
+       if (card.innerHTML === openCard[0].innerHTML) {
           console.log("cards hava matched");
           // if it's a match, both cards in the stack will change their class name from 'open', 'show' to 'match'
           // the both cards are popped out of openCard array and pushed in matchedCard array
-          openCard[0].classList.add('match','animated', 'infinite', 'rotateIn');
-          openCard[1].classList.add('match','animated', 'infinite', 'rotateIn');
-
-          // waiting for sometime for animation
-          setTimeout(function() {
-            openCard[0].classList.remove('open', 'show','animated', 'infinite', 'rotateIn');
-            openCard[1].classList.remove('open', 'show','animated', 'infinite', 'rotateIn');
-          },500);
+          openCard[0].classList.remove('open', 'show');
+          openCard[0].classList.add('match');
+          openCard[1].classList.remove('open', 'show');
+          openCard[1].classList.add('match');
 
           matchedCard.push(openCard.pop());
           matchedCard.push(openCard.pop());
-        }
-        else {
+      }
+      else {
           console.log("there is no match, card is open again");
           // if cards dont match, then 'open', 'show' class name is removed
           // and both cards are popped out
-          openCard[0].classList.add('animated', 'infinite', 'shake');
-          openCard[1].classList.add('animated', 'infinite', 'shake');
-
-          // waiting for sometime for animation
-          setTimeout(function() {
-            openCard[0].classList.remove('open', 'show','animated', 'infinite', 'shake' );
-            openCard[1].classList.remove('open', 'show', 'animated', 'infinite', 'shake');
-          },500);
-
+          openCard[0].classList.remove('open', 'show');
+          openCard[1].classList.remove('open', 'show');
           openCard.pop();
           openCard.pop();
-        }
+      }
         // incrementing the move
         move += 1;
         // changing the move on the screen
         document.getElementsByClassName('moves')[0].textContent = move;
-      }
+    }
       setRating(move);
       congratulationPopus();
    }
 
    // adding event listener to the board
-   let addCardEventListener = function () {
-     console.log("inside addCardEventListener");
-     const $cards = document.querySelectorAll('.deck>.card');
-     [...$cards].forEach($card => $card.addEventListener('click', displayCard));
+   let CardEventListener = function () {
+     const cards = document.querySelectorAll('.deck>.card');
+     [...cards].forEach(card =>
+       card.addEventListener('click', displayCard));
    };
 
    // reset button eventhandler
@@ -249,29 +241,11 @@
         closeOnCancel: false
       }).then(function (isConfirm) {
         if (isConfirm) {
+          resetEverything();
           generateBoard(array);
         }
       })
    });
 
-
-   // adding intro to the game
-   function intro() {
-     console.log("in intro");
-     swal({
-        title: "Are you ready for this game?",
-        text: "16 boxes and 8 pairs! you look at a card once and try to find a match!",
-        type: "info",
-        confirmButtonClass: "btn-danger",
-        confirmButtonText: "Yes, let's start!",
-        closeOnConfirm: false
-      }).then(function (isConfirm) {
-        if (isConfirm) {
-          generateBoard(array);
-        }
-      })
-   };
-
-   // calling intro() function to start the game
-    // intro();
+    // calling generatBoard to begin the game
     generateBoard(array);
