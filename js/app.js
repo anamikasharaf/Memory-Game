@@ -1,62 +1,53 @@
-// creating an array of strings that hold all the card names
-  let array = ["fa-diamond","fa-paper-plane-o","fa-anchor","fa-bolt","fa-cube","fa-anchor","fa-leaf","fa-bicycle","fa-diamond","fa-bomb","fa-leaf","fa-bomb","fa-bolt","fa-bicycle","fa-paper-plane-o","fa-cube"];
-  // array to save all the open card
-  let openCard = [];
 
-  // storing status of the game in an object
+  let arrayOfCards = ["fa-diamond","fa-paper-plane-o","fa-anchor","fa-bolt","fa-cube","fa-anchor","fa-leaf","fa-bicycle","fa-diamond","fa-bomb","fa-leaf","fa-bomb","fa-bolt","fa-bicycle","fa-paper-plane-o","fa-cube"];
+  let openCards = [];
+
   const gameStatus = { PLAYING: 1, NOTPLAYING: 2 };
-  // Initializing the status to not NOTPLAYING
-  let status = gameStatus.NOTPLAYING;
-  // accessing list with classname deck
-  let listElement = document.getElementsByClassName('deck');
-  // accessing restart
+  let currentStatus = gameStatus.NOTPLAYING;
+
+  let deck = document.getElementsByClassName('deck');
   let restart = document.querySelector('.restart');
-  // setting star
   let stars = document.querySelector('.stars');
-  // setting the number of moves
+
   let move = 0;
-  // creating an array for matched cards
   let matchedCard = [];
 
-  // setting rating stars
-  let star1 = document.createElement('i');
-  stars.appendChild(star1);
 
-  let star2 = document.createElement('i');
-  stars.appendChild(star2);
-
-  let star3 = document.createElement('i');
-  stars.appendChild(star3);
+  let firstStar = document.createElement('i');
+  stars.appendChild(firstStar);
+  let secondStar = document.createElement('i');
+  stars.appendChild(secondStar);
+  let thirdStar = document.createElement('i');
+  stars.appendChild(thirdStar);
 
   let set=0;
 
-  // setting up timer variables
   let time = 0;
   let timer = document.querySelector('.timer');
 
 
-  // Shuffle function from http://stackoverflow.com/a/2450976
-  function shuffle(array) {
-      var currentIndex = array.length, temporaryValue, randomIndex;
+  // shuffle function
+  function shuffle(arrayOfCards) {
+      var currentIndex = arrayOfCards.length, temporaryValue, randomIndex;
 
       while (currentIndex !== 0) {
           randomIndex = Math.floor(Math.random() * currentIndex);
           currentIndex -= 1;
-          temporaryValue = array[currentIndex];
-          array[currentIndex] = array[randomIndex];
-          array[randomIndex] = temporaryValue;
+          temporaryValue = arrayOfCards[currentIndex];
+          arrayOfCards[currentIndex] = arrayOfCards[randomIndex];
+          arrayOfCards[randomIndex] = temporaryValue;
       }
 
-      return array;
+      return arrayOfCards;
   }
 
   // setting timer function
-  function setTimeout(){
+  function initialiTimer(){
     if (!time)
     {
       time = setInterval(function(){
 
-        if (status === gameStatus.PLAYING) {
+        if (currentStatus === gameStatus.PLAYING) {
           timer.innerText = `${time} secs`;
           time++;
         }
@@ -64,73 +55,26 @@
     }
   }
 
-  // resetting all variable function
-  function resetEverything()
-  {
-    if(time)
-    {
-      clearInterval(time);
-      time = 0;
-      timer.innerText = `${time} secs`;
-      set = 0;
-      status = gameStatus.NOTPLAYING;
-      move = 0;
-      document.getElementsByClassName('moves')[0].textContent = move;
-      matchedCard = [];
-    }
-  }
-
-  // looping through each card and creating it's HTML tag
-  function generateBoard(array) {
-    console.log( 'generate board' );
-
-    // clear the board
-    listElement[0].innerHTML = "";
-
-    // shuffling the array first
-    let shuffledArray = shuffle(array);
-
-    // setting the rating stars
-    star1.classList.add('fa','fa-star');
-    star2.classList.add('fa','fa-star');
-    star3.classList.add('fa','fa-star');
-
-    // looping through the array, creating it's HTML and adding each card's HTML to page
-    for (let i=0; i<16; i++)
-    {
-      // creating li tag
-      let liElement = document.createElement('li');
-      // adding class name to liElement
-      liElement.classList.add("card");
-      // creating i tag
-      let iElement = document.createElement('i');
-      // adding class name to iElement
-      iElement.classList.add('fa', shuffledArray[i]);
-      // appending iElement to liElement
-      liElement.appendChild(iElement);
-      // appending iElement to the list
-      listElement[0].appendChild(liElement);
-    }
-    console.log("before eventlistener");
-    CardEventListener();
-    console.log("after eventlistener");
-    setTimeout();
-  }
-
   // adding rating to the game
   function setRating(move) {
-    console.log("congratulation checks");
     if (move <= 24 && move >= 12)
     {
-     star3.classList.remove('fa','fa-star');
+     thirdStar.classList.remove('fa','fa-star');
     }
     else if (move >= 24)
     {
-     star2.classList.remove('fa','fa-star');
+     secondStar.classList.remove('fa','fa-star');
     }
   }
 
-  // Congratulations popups
+  // adding event listener to the board
+  const CardEventListener = function () {
+    const cards = document.querySelectorAll('.deck>.card');
+    [...cards].forEach(card =>
+      card.addEventListener('click', displayCard));
+  };
+
+  // congratulations popups
   function congratulationPopus() {
     if (matchedCard.length === 8 && set===0)
       {
@@ -152,7 +96,7 @@
        }
        else if (matchedCard.length === 16)
        {
-         let content = `You took ${move} and ${time} to finish the game. Do you wanna play again?`;
+         let content = `You took ${move} moves and ${time} secs to finish the game. Do you wanna play again?`;
          swal({
             title: "Game Over! Congratulations :)",
             text: content,
@@ -163,69 +107,124 @@
             closeOnConfirm: false
           }).then(function (isConfirm) {
             if (isConfirm) {
-              generateBoard(array);
+              resetEverything()
+              generateBoard(arrayOfCards);
             }
           })
        }
   }
 
-   //display the card's symbol
-   function displayCard(evt) {
+  //display the card's symbol
+  function displayCard(evt) {
 
-     console.log("inside displayCard");
+    // checking for gameStatus and changing it to playing
+    if (currentStatus === gameStatus.NOTPLAYING) {
+       currentStatus = gameStatus.PLAYING;
+    }
 
-     // checking for gameStatus and changing it to playing
-     if (status === gameStatus.NOTPLAYING) {
-        status = gameStatus.PLAYING;
+    // checking for card class, it should either match
+    const card = evt.currentTarget;
+
+    if ( card.classList.contains('show') || card.classList.contains('match') ) {
+     return true;
+    }
+
+    // when card is clicked the class changes to "card open show"
+    card.classList.add('open', 'show');
+
+    // add it to the stack of open cards
+    openCards.push(card);
+
+    // checking for a match
+    if (openCards.length > 1) {
+      if (card.innerHTML === openCards[0].innerHTML) {
+         console.log("cards hava matched");
+         // if it's a match, both cards in the stack will change their class name from 'open', 'show' to 'match'
+         // the both cards are popped out of openCard array and pushed in matchedCard array
+         openCards[0].classList.add( "match", "animated", "infinite", "rotateIn" );
+         openCards[1].classList.add( "match", "animated", "infinite", "rotateIn" );
+
+         matchedCard.push(openCards.pop());
+         matchedCard.push(openCards.pop());
+
+         setTimeout(function() {
+           const currentMatched = deck[0].querySelectorAll( ".match" );
+           currentMatched.forEach( card => card.classList.remove( "open", "show", "infinite", "animated", "rotateIn" ) );
+         }, 500);
+     }
+     else {
+         console.log("there is no match, card is open again");
+         // if cards dont match, then 'open', 'show' class name is removed
+         // and both cards are popped out
+         openCards[0].classList.add( "notmatch", "animated", "infinite", "shake" );
+         openCards[1].classList.add( "notmatch", "animated", "infinite", "shake" );
+
+         setTimeout(function() {
+           const currentSelected = deck[0].querySelectorAll( ".notmatch" );
+           currentSelected.forEach( card => card.classList.remove( "notmatch", "infinite", "animated", "rotateIn" ) );
+         }, 500);
+
+         openCards[0].classList.remove('open', 'show');
+         openCards[1].classList.remove('open', 'show');
+         openCards.pop();
+         openCards.pop();
      }
 
-     // checking for card class, it should either match
-     let card = evt.currentTarget;
-
-     // when card is clicked the class changes to "card open show"
-     card.classList.add('open', 'show');
-
-     // add it to the stack of open cards
-     openCard.push(card);
-
-     // checking for a match
-     if (openCard.length > 1) {
-       if (card.innerHTML === openCard[0].innerHTML) {
-          console.log("cards hava matched");
-          // if it's a match, both cards in the stack will change their class name from 'open', 'show' to 'match'
-          // the both cards are popped out of openCard array and pushed in matchedCard array
-          openCard[0].classList.remove('open', 'show');
-          openCard[0].classList.add('match');
-          openCard[1].classList.remove('open', 'show');
-          openCard[1].classList.add('match');
-
-          matchedCard.push(openCard.pop());
-          matchedCard.push(openCard.pop());
-      }
-      else {
-          console.log("there is no match, card is open again");
-          // if cards dont match, then 'open', 'show' class name is removed
-          // and both cards are popped out
-          openCard[0].classList.remove('open', 'show');
-          openCard[1].classList.remove('open', 'show');
-          openCard.pop();
-          openCard.pop();
-      }
-        // incrementing the move
-        move += 1;
-        // changing the move on the screen
-        document.getElementsByClassName('moves')[0].textContent = move;
-    }
-      setRating(move);
-      congratulationPopus();
+       move += 1;
+       document.getElementsByClassName('moves')[0].textContent = move;
    }
+     setRating(move);
+     congratulationPopus();
+  }
 
-   // adding event listener to the board
-   let CardEventListener = function () {
-     const cards = document.querySelectorAll('.deck>.card');
-     [...cards].forEach(card =>
-       card.addEventListener('click', displayCard));
-   };
+  // resetting all variable function
+  function resetEverything()
+  {
+    if(time)
+    {
+      clearInterval(time);
+      time = null;
+      timer.innerText = `0 secs`;
+      set = 0;
+      currentStatus = gameStatus.NOTPLAYING;
+      move = 0;
+      document.getElementsByClassName('moves')[0].textContent = move;
+      matchedCard = [];
+    }
+  }
+
+  // looping through each card and creating it's HTML tag
+  function generateBoard(arrayOfCards) {
+
+    // clear the board
+    deck[0].innerHTML = "";
+
+    // shuffling the array first
+    let shuffledArray = shuffle(arrayOfCards);
+
+    // setting the rating stars
+    firstStar.classList.add('fa','fa-star');
+    secondStar.classList.add('fa','fa-star');
+    thirdStar.classList.add('fa','fa-star');
+
+    // looping through the array, creating it's HTML and adding each card's HTML to page
+    for (let i=0; i<16; i++)
+    {
+      // creating li tag
+      let liElement = document.createElement('li');
+      liElement.classList.add("card");
+
+      // creating i tag
+      let iElement = document.createElement('i');
+      iElement.classList.add('fa', shuffledArray[i]);
+      liElement.appendChild(iElement);
+
+      deck[0].appendChild(liElement);
+    }
+
+    CardEventListener();
+    initialiTimer();
+  }
 
    // reset button eventhandler
    restart.addEventListener('click', function(){
@@ -241,11 +240,11 @@
         closeOnCancel: false
       }).then(function (isConfirm) {
         if (isConfirm) {
-          resetEverything();
-          generateBoard(array);
+          resetEverything()
+          generateBoard(arrayOfCards);
         }
       })
    });
 
     // calling generatBoard to begin the game
-    generateBoard(array);
+    generateBoard(arrayOfCards);
