@@ -29,6 +29,16 @@ C. Game over
  
  Game will be assisted with number of moves taken so far as well as a timer clock to track the time taken to finish the game. Number of stars will be the judge of the performace of memeory. 
  
+ ## Dependencies
+ 
+ Following thrid party style sheets has been used to develop Memory Game.
+ 
+ Font Awesome: https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css
+ Google Fonts: https://fonts.googleapis.com/css?family=Coda
+ Sweet Alert: https://cdn.jsdelivr.net/sweetalert2/3.0.3/sweetalert2.min.css
+ Animation: https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.css
+ 
+ 
  ## Code
  
  This project includes 3 major files
