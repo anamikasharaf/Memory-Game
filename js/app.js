@@ -19,11 +19,13 @@
   stars.appendChild(secondStar);
   let thirdStar = document.createElement('i');
   stars.appendChild(thirdStar);
+  let numberOfStars = 3;
 
   let set=0;
 
   let time = 0;
   let timer = document.querySelector('.timer');
+  let timeIntervalID = 0;
 
 
   // shuffle function
@@ -43,9 +45,9 @@
 
   // setting timer function
   function initialiTimer(){
-    if (!time)
+    if (!timeIntervalID)
     {
-      time = setInterval(function(){
+      timeIntervalID = setInterval(function(){
 
         if (currentStatus === gameStatus.PLAYING) {
           timer.innerText = `${time} secs`;
@@ -60,10 +62,12 @@
     if (move <= 24 && move >= 12)
     {
      thirdStar.classList.remove('fa','fa-star');
+     numberOfStars = 2;
     }
     else if (move >= 24)
     {
      secondStar.classList.remove('fa','fa-star');
+     numberOfStars = 1;
     }
   }
 
@@ -96,7 +100,7 @@
        }
        else if (matchedCard.length === 16)
        {
-         let content = `You took ${move} moves and ${time} secs to finish the game. Do you wanna play again?`;
+         let content = `You took ${move} moves and ${time} secs to finish the game. You got ${numberOfStars} starts on your performance. Do you wanna play again?`;
          swal({
             title: "Game Over! Congratulations :)",
             text: content,
@@ -180,16 +184,18 @@
   // resetting all variable function
   function resetEverything()
   {
-    if(time)
+    if(timeIntervalID)
     {
-      clearInterval(time);
-      time = null;
-      timer.innerText = `0 secs`;
+      clearInterval(timeIntervalID);
+      timeIntervalID = null;
+      time = 0;
+      timer.innerText = `${time} secs`;
       set = 0;
       currentStatus = gameStatus.NOTPLAYING;
       move = 0;
       document.getElementsByClassName('moves')[0].textContent = move;
       matchedCard = [];
+      openCards = [];
     }
   }
 
